@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  reservation_database:
+    container_name: reservation_database
+    build:
+      context: .
+      dockerfile: Dockerfile.database
+    env_file:
+      - .env
+    ports:
+      - "8091-8096:8091-8096"
+      - "11210-11211:11210-11211"
+  reservation_backend:
+    container_name: reservation_backend
+    build: .  # Build the Docker image using the Dockerfile in the current directory
+    ports:
+      - "3000:3000"  # Forward the container's port 3000 to the host machine's port 3333 for accessing the backend service
+    depends_on:
+      - reservation_database  # Ensure that the backend service starts after the database service is up and running
+    env_file:
+      - .env  # Load environment variables from the .env file in the current directory

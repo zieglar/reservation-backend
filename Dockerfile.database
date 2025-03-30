@@ -1,0 +1,12 @@
+FROM couchbase:latest
+
+# 设置工作目录
+WORKDIR /opt/couchbase
+
+# 复制 Couchbase 配置脚本
+COPY scripts/configure-couchbase.sh /opt/couchbase/configure-couchbase.sh
+
+# 运行 Couchbase 配置脚本
+CMD ["sh", "/opt/couchbase/configure-couchbase.sh"]
+
+EXPOSE 8091 8092 8093 8094 8095 8096 11210 11211

@@ -1,0 +1,164 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+"""餐桌信息"""
+type TableInfoEntity {
+  id: String!
+
+  """可坐人数"""
+  seats: Int!
+}
+
+"""简单餐桌信息"""
+type SimpleTableInfo {
+  """可坐人数"""
+  seats: Int!
+}
+
+"""联系人信息"""
+type ContactInfoEntity {
+  id: String!
+  createdAt: String!
+  updatedAt: String!
+
+  """姓名"""
+  name: String!
+
+  """电话"""
+  phone: String!
+}
+
+"""简易联系人信息"""
+type SimpleContactInfo {
+  """姓名"""
+  name: String!
+
+  """电话"""
+  phone: String!
+}
+
+"""预约信息"""
+type ReservationInfoEntity {
+  id: String!
+  createdAt: String!
+  updatedAt: String!
+
+  """联系人ID"""
+  contactId: String!
+
+  """餐桌ID"""
+  tableId: String!
+
+  """用户ID"""
+  userId: String!
+
+  """预约时间"""
+  date: String!
+
+  """预定人数"""
+  numberOfPeople: String!
+
+  """预约状态"""
+  status: Int!
+
+  """联系人信息"""
+  contact: SimpleContactInfo!
+
+  """餐桌信息"""
+  table: SimpleTableInfo!
+
+  """最后操作人ID"""
+  lastOperatorId: String
+}
+
+type Query {
+  """获取所有预约信息"""
+  reservations(
+    page: Int! = 1
+    limit: Int! = 10
+
+    """预约相关信息:预约人姓名/预约电话"""
+    keyword: String
+
+    """预约日期"""
+    date: String
+
+    """预约状态"""
+    status: Int
+
+    """餐桌人数"""
+    seats: Int
+  ): [ReservationInfoEntity!]!
+
+  """获取当前用户所有预约信息"""
+  reservationsByCurrentUser(
+    page: Int! = 1
+    limit: Int! = 10
+
+    """预约相关信息:预约人姓名/预约电话"""
+    keyword: String
+
+    """预约日期"""
+    date: String
+
+    """预约状态"""
+    status: Int
+
+    """餐桌人数"""
+    seats: Int
+  ): [ReservationInfoEntity!]!
+
+  """获取预约信息"""
+  reservationInfo(id: String!): ReservationInfoEntity!
+
+  """获取所有餐桌信息"""
+  tables: [TableInfoEntity!]!
+
+  """获取所有联系人信息"""
+  contacts: [ContactInfoEntity!]!
+}
+
+type Mutation {
+  """新增预约信息"""
+  addReservationInfo(data: AddReservationInfoInput!): ReservationInfoEntity!
+
+  """修改预约信息"""
+  updateReservationInfo(data: UpdateReservationInfoInput!): ReservationInfoEntity!
+}
+
+"""新增预约信息"""
+input AddReservationInfoInput {
+  """预约日期"""
+  date: String!
+
+  """预约人数"""
+  numberOfPeople: Int!
+
+  """预约人姓名"""
+  name: String!
+
+  """预约人手机号"""
+  phone: String!
+}
+
+"""修改预约信息状态"""
+input UpdateReservationInfoInput {
+  """预约信息ID"""
+  id: String!
+
+  """预约状态"""
+  status: Int
+
+  """预约日期"""
+  date: String
+
+  """预约人数"""
+  numberOfPeople: Int
+
+  """预约人姓名"""
+  name: String
+
+  """预约人手机号"""
+  phone: String
+}
