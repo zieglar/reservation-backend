@@ -45,5 +45,6 @@ async function bootstrap() {
 	const url = await app.getUrl();
 	logger.log(`Listening at ${url}`, 'NestApplication');
 	logger.log(`Swagger Document Deploy at ${url}/docs`, 'NestApplication');
+	logger.log(`GraphQL Document Deploy at ${url}/graphiql`, 'NestApplication');
 }
 bootstrap();

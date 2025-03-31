@@ -6,17 +6,34 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.database
+    environment:
+      - COUCHBASE_USERNAME=${COUCHBASE_USERNAME}
+      - COUCHBASE_PASSWORD=${COUCHBASE_PASSWORD}
+      - COUCHBASE_BUCKET_NAME=${COUCHBASE_BUCKET_NAME}
     env_file:
       - .env
     ports:
       - "8091-8096:8091-8096"
       - "11210-11211:11210-11211"
+    healthcheck:
+      test: ["CMD", "curl", "-s", "-f", "-u", "${COUCHBASE_USERNAME}:${COUCHBASE_PASSWORD}", "http://localhost:8091/pools/default/buckets/${COUCHBASE_BUCKET_NAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
   reservation_backend:
     container_name: reservation_backend
-    build: .  # Build the Docker image using the Dockerfile in the current directory
+    build: .
     ports:
-      - "3000:3000"  # Forward the container's port 3000 to the host machine's port 3333 for accessing the backend service
-    depends_on:
-      - reservation_database  # Ensure that the backend service starts after the database service is up and running
+      - "3000:3000"
+    environment:
+      - COUCHBASE_USERNAME=${COUCHBASE_USERNAME}
+      - COUCHBASE_PASSWORD=${COUCHBASE_PASSWORD}
+      - COUCHBASE_BUCKET_NAME=${COUCHBASE_BUCKET_NAME}
+      - COUCHBASE_CONNECTION_STRING=${COUCHBASE_CONNECTION_STRING}
     env_file:
-      - .env  # Load environment variables from the .env file in the current directory
+      - .env
+    depends_on:
+      reservation_database:
+        condition: service_healthy

@@ -8,10 +8,10 @@ COPY package*.json ./
 COPY yarn.lock ./
 COPY tsconfig.json ./
 COPY tsconfig.build.json ./
-COPY .env ./
+COPY nest-cli.json ./
 
 # Install app dependencies
-RUN apt-get install g++ && yarn global add @nestjs/cli && yarn install --production
+RUN apt-get update && apt-get install -y g++ && yarn global add @nestjs/cli && yarn install
 
 COPY apps ./apps
 COPY graphql ./graphql
@@ -21,11 +21,12 @@ RUN yarn run build
 
 FROM node:22.14.0
 
+WORKDIR /app
+
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package*.json ./
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/graphql ./graphql
-COPY --from=builder /app/.env ./.env
 
 EXPOSE 3000
-CMD ["node", "./dist/apps/backend/main"]
+CMD ["node", "dist/apps/backend/main.js"]

@@ -3,10 +3,20 @@ FROM couchbase:latest
 # 设置工作目录
 WORKDIR /opt/couchbase
 
-# 复制 Couchbase 配置脚本
+# 确保脚本有执行权限
 COPY scripts/configure-couchbase.sh /opt/couchbase/configure-couchbase.sh
+RUN chmod +x /opt/couchbase/configure-couchbase.sh
 
-# 运行 Couchbase 配置脚本
-CMD ["sh", "/opt/couchbase/configure-couchbase.sh"]
+# 使用配置脚本作为入口点
+CMD ["/opt/couchbase/configure-couchbase.sh"]
 
+# 暴露 Couchbase 服务所需的端口
+# 8091: 管理界面
+# 8092-8096: 各种服务接口
+# 11210: 内部和客户端通信
+# 11211: 传统 memcached 接口
 EXPOSE 8091 8092 8093 8094 8095 8096 11210 11211
+
+# 设置健康检查
+HEALTHCHECK --interval=30s --timeout=10s --retries=3 \
+  CMD curl -f http://localhost:8091/pools || exit 1
