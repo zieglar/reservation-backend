@@ -107,7 +107,12 @@ export class ReservationInfoService {
 			throw new Error('没有找到预约信息');
 		}
 
-		if (user.role === ROLE_USER && data.status !== reservation.status && data.status !== 3) {
+		if (
+			user.role === ROLE_USER &&
+			has(data, 'status') &&
+			data.status !== reservation.status &&
+			data.status !== 3
+		) {
 			throw new Error('用户只能取消预约');
 		}
 

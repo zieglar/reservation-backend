@@ -9,9 +9,10 @@ import { AuthModule } from '../auth/auth.module';
 import { OgmaModule } from '@ogma/nestjs-module';
 import { FastifyParser } from '@ogma/platform-fastify';
 import { GraphQLFastifyParser } from '@ogma/platform-graphql-fastify';
-import { APP_INTERCEPTOR } from '@nestjs/core';
+import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 import { AppController } from './app.controller';
 import { FastifyReply, FastifyRequest } from 'fastify';
+import { GqlExceptionFilter } from '@libs/shared';
 
 @Module({
 	imports: [
@@ -21,6 +22,7 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 			logHostname: false,
 			logApplication: false,
 		}),
+		OgmaModule.forFeature(GqlExceptionFilter),
 		AuthModule,
 		ContactInfoModule,
 		TableInfoModule,
@@ -38,6 +40,7 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 	],
 	controllers: [AppController],
 	providers: [
+		{ provide: APP_FILTER, useClass: GqlExceptionFilter },
 		{ provide: APP_INTERCEPTOR, useClass: ClassSerializerInterceptor },
 		FastifyParser,
 		GraphQLFastifyParser,

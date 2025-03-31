@@ -1,7 +1,7 @@
 import { ArgsType, Field, InputType, Int, registerEnumType } from '@nestjs/graphql';
 import { ReservationStatus } from '@libs/shared';
 import { PaginationArgs } from '../common/base.schema';
-import { Allow, IsIn } from 'class-validator';
+import { Allow, IsIn, ValidateIf } from 'class-validator';
 
 @InputType({ description: '新增预约信息' })
 export class AddReservationInfoInput {
@@ -49,6 +49,7 @@ export class UpdateReservationInfoInput {
 
 	@Field(() => Int, { description: '预约状态', nullable: true })
 	@Allow()
+	@ValidateIf((_, val) => val !== null && val !== undefined)
 	@IsIn([2, 3, 4])
 	status?: number;
 
