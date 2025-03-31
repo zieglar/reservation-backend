@@ -125,6 +125,12 @@ type Mutation {
 
   """修改预约信息"""
   updateReservationInfo(data: UpdateReservationInfoInput!): ReservationInfoEntity!
+
+  """新增餐桌信息"""
+  addTableInfo(data: TableInfoInput!): TableInfoEntity!
+
+  """修改餐桌信息"""
+  updateTableInfo(id: String!, data: TableInfoInput!): TableInfoEntity!
 }
 
 """新增预约信息"""
@@ -161,4 +167,10 @@ input UpdateReservationInfoInput {
 
   """预约人手机号"""
   phone: String
+}
+
+"""餐桌信息"""
+input TableInfoInput {
+  """餐桌座位数"""
+  seats: Int!
 }

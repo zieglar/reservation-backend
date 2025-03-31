@@ -17,6 +17,8 @@ describe('TableInfoService', () => {
 							count: jest.fn(),
 							createMany: jest.fn(),
 							find: jest.fn(),
+							create: jest.fn(),
+							updateOneById: jest.fn(),
 						},
 					},
 				},
@@ -76,6 +78,55 @@ describe('TableInfoService', () => {
 				{},
 				{ select: ['id', 'seats'], sort: { seats: 'ASC' } },
 			);
+		});
+	});
+
+	describe('addTableInfo', () => {
+		it('应该成功新增餐桌信息', async () => {
+			const table = { id: '3', seats: 6 };
+			const input = { seats: 6 };
+			const countSpy = jest.spyOn(dataService.tables, 'count');
+			const createSpy = jest.spyOn(dataService.tables, 'create');
+
+			countSpy.mockResolvedValue(0);
+			createSpy.mockResolvedValue(table);
+
+			const result = await service.addTableInfo(input);
+
+			expect(result).toEqual(table);
+			expect(countSpy).toHaveBeenCalledWith({ seats: input.seats });
+			expect(createSpy).toHaveBeenCalledWith(input);
+		});
+
+		it('如果存在相同数量座位的桌子，应该抛出错误', async () => {
+			const input = { seats: 6 };
+			const countSpy = jest.spyOn(dataService.tables, 'count');
+			countSpy.mockResolvedValue(1);
+
+			await expect(service.addTableInfo(input)).rejects.toThrow(
+				'已经存在相同数量的座位的桌子，无法添加',
+			);
+		});
+	});
+
+	describe('updateTableInfo', () => {
+		it('应该成功更新餐桌信息', async () => {
+			const table = { id: '1', seats: 8 };
+			const input = { seats: 8 };
+			const countSpy = jest.spyOn(dataService.tables, 'count');
+			const updateSpy = jest.spyOn(dataService.tables, 'updateOneById');
+
+			countSpy.mockResolvedValue(0);
+			updateSpy.mockResolvedValue(table);
+
+			const result = await service.updateTableInfo('1', input);
+
+			expect(result).toEqual(table);
+			expect(countSpy).toHaveBeenCalledWith({
+				seats: input.seats,
+				id: { $ne: '1' },
+			});
+			expect(updateSpy).toHaveBeenCalledWith('1', input);
 		});
 	});
 });
